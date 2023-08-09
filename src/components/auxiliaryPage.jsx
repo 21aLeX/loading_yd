@@ -18,6 +18,7 @@ const AuxiliaryPage = () => {
     if (!simulation.current) {
       simulation.current = true;
       const data = getYa();
+      console.log(data);
       data.then(setData);
     }
   }, []);
