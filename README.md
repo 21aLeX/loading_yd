@@ -2,7 +2,7 @@
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/23ed6307b7c9e502eb05/maintainability)](https://codeclimate.com/github/21aLeX/loading_yd/maintainability)
 
-Live Demo [**loadingYA**]()
+Live Demo [**loadingYA**](https://loading-yd.vercel.app)
 
 При переходе на страницу необходимо авторизоватся через яндекс, разрешая полный доступ к записи на диск.
 За раз можно загружать не более 100 файлов.

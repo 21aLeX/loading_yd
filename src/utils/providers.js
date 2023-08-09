@@ -6,7 +6,6 @@ const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(window.sessionStorage.getItem('token'));
   const [loggedIn, setLoggedIn] = useState(token !== null);
   const logIn = useCallback((data) => {
-    console.log(data);
     setToken(data.access_token);
     window.sessionStorage.setItem('token', data.access_token);
     setLoggedIn(true);

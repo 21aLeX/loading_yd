@@ -8,6 +8,39 @@ import useSpiner from '../hooks/useSpiner.jsx';
 import { getUnique, renderImgs } from '../utils/auxiliaryFunctions.js';
 import { apiRoutes } from '../utils/routes.js';
 
+// загрузка файлов на диск
+const sendFiles = (spiner, files, auth, setTextAlert, setFiles, t) => {
+  spiner.loading();
+  const arrRequests = files.map(async (file) => {
+    const { name } = file;
+    const answer = await axios.get(apiRoutes.sendDisk(name), auth.getAuthHeader());
+    return axios.put(answer.data.href, file);
+  });
+  Promise.all(arrRequests).then(() => {
+    setTextAlert(t('sendSucsessful'));
+    setFiles([]);
+    spiner.loaded();
+    spiner.loadingStop();
+    setTimeout(() => setTextAlert(''), 10000);
+  });
+};
+// загрузка файлов на страницу
+const handleFile = (setTextAlert, t, spiner, setFiles, files, names, dispatch) => async (event) => {
+  const countFile = event.target.files.length;
+  if (countFile > 100) {
+    setTextAlert(t('over100'));
+    setTimeout(() => setTextAlert(''), 10000);
+  } else {
+    spiner.loading();
+    const newFiles = [];
+    for (let i = 0; i < event.target.files.length; i += 1) {
+      newFiles.push(event.target.files[i]);
+    }
+    setFiles(getUnique(files, newFiles, names, dispatch));
+    spiner.loaded();
+  }
+  document.querySelector('input').value = '';
+};
 const FormUploader = () => {
   const [files, setFiles] = useState([]);
   const [textAlert, setTextAlert] = useState('');
@@ -21,39 +54,6 @@ const FormUploader = () => {
     const containerFiles = document.querySelector("[data-id='containerFiles']");
     containerFiles.replaceChildren(...renderImgs(files));
   }, [files]);
-  // загрузка файлов на диск
-  const sendFiles = () => {
-    spiner.loading();
-    const arrRequests = files.map(async (file) => {
-      const { name } = file;
-      const answer = await axios.get(apiRoutes.sendDisk(name), auth.getAuthHeader());
-      return axios.put(answer.data.href, file);
-    });
-    Promise.all(arrRequests).then(() => {
-      setTextAlert(t('sendSucsessful'));
-      setFiles([]);
-      spiner.loaded();
-      spiner.loadingStop();
-      setTimeout(() => setTextAlert(''), 10000);
-    });
-  };
-  // загрузка файлов на страницу
-  const handleUploadFile = async (event) => {
-    const countFile = event.target.files.length;
-    if (countFile > 100) {
-      setTextAlert(t('over100'));
-      setTimeout(() => setTextAlert(''), 10000);
-    } else {
-      spiner.loading();
-      const newFiles = [];
-      for (let i = 0; i < event.target.files.length; i += 1) {
-        newFiles.push(event.target.files[i]);
-      }
-      setFiles(getUnique(files, newFiles, names, dispatch));
-      spiner.loaded();
-    }
-    document.querySelector('input').value = '';
-  };
 
   return (
     <div className="App">
@@ -67,12 +67,14 @@ const FormUploader = () => {
       )}
       <div data-id="spinner" />
       <header className="App-header">
-        <input type="file" multiple onChange={handleUploadFile} />
-        {spiner.spiner === 'loaded' && (
-          <Button variant="primary" type="submit" onClick={sendFiles}>
-            {t('send')}
-          </Button>
-        )}
+        <input type="file" multiple onChange={handleFile(setTextAlert, t, spiner, setFiles, files, names, dispatch)} />
+        {
+          spiner.spiner === 'loaded' && (
+            <Button variant="primary" type="submit" onClick={() => sendFiles(spiner, files, auth, setTextAlert, setFiles, t)}>
+              {t('send')}
+            </Button>
+          )
+        }
       </header>
       <div data-id="containerFiles" />
     </div>

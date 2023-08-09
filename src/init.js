@@ -5,7 +5,6 @@ const getYa = async (getData) => {
     {
       client_id: process.env.REACT_APP_CLIENT_ID,
       response_type: 'token',
-      // redirect_uri: "http://localhost:3000/",
       // redirect_uri: "https://oauth.yandex.ru/verification_code",
       redirect_uri: apiRoutes.deploy(),
     },
