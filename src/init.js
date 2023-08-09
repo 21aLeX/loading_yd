@@ -21,3 +21,6 @@ const getYa = () => window.YaAuthSuggest.init(
   .then(async (result) => { await result.handler(); });
 
 export default getYa;
+};
+
+export default getYa;
