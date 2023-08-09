@@ -1,7 +1,7 @@
 import { apiRoutes } from './utils/routes';
 
 const getYa = async () => {
-  await window.YaAuthSuggest.init(
+  const promisToken = await window.YaAuthSuggest.init(
     {
       client_id: process.env.REACT_APP_CLIENT_ID,
       response_type: 'token',
@@ -20,6 +20,7 @@ const getYa = async () => {
     },
   )
     .then(async (result) => { await result.handler(); });
+  return promisToken;
 };
 
 export default getYa;
