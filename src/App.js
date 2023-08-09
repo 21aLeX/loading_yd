@@ -1,25 +1,47 @@
-import logo from './logo.svg';
 import './App.css';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation,
+  Navigate,
+} from 'react-router-dom';
+import FormUploader from './components/formUploader';
+import useAuth from './hooks/useAuth.jsx';
+import { routes } from './utils/routes.js';
+import AuxiliaryPage from './components/auxiliaryPage';
+import { AuthProvider, SpinerProvider } from './utils/providers.js';
 
-function App() {
+const FormRoute = ({ children }) => {
+  const location = useLocation();
+  const auth = useAuth();
+  if (auth.loggedIn) {
+    return children;
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Navigate to={routes.auxiliary()} state={{ from: location }} />
   );
-}
+};
+const App = () => (
+  <AuthProvider>
+    <SpinerProvider>
+      <BrowserRouter>
+        <div className="d-flex flex-column div">
+          <Routes>
+            <Route path={routes.auxiliary()} element={<AuxiliaryPage />} />
+            <Route
+              path={routes.home()}
+              element={(
+                <FormRoute>
+                  <FormUploader />
+                </FormRoute>
+              )}
+            />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </SpinerProvider>
+  </AuthProvider>
+);
 
 export default App;
