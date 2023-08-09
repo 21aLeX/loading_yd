@@ -26,7 +26,7 @@ const FormUploader = () => {
     spiner.loading();
     const arrRequests = files.map(async (file) => {
       const { name } = file;
-      const answer = await axios.get(apiRoutes(name), auth.getAuthHeader());
+      const answer = await axios.get(apiRoutes.sendDisk(name), auth.getAuthHeader());
       return axios.put(answer.data.href, file);
     });
     Promise.all(arrRequests).then(() => {
