@@ -23,6 +23,3 @@ const getYa = async () => {
 };
 
 export default getYa;
-};
-
-export default getYa;
